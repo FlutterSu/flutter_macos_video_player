@@ -21,6 +21,16 @@ static NSDictionary *wrapResult(NSDictionary *result, FlutterError *error) {
                                                     errorDict, @"error", nil];
 }
 
+static id GetNullableObject(NSDictionary* dict, id key) {
+  id result = dict[key];
+  return (result == [NSNull null]) ? nil : result;
+}
+static id GetNullableObjectAtIndex(NSArray* array, NSInteger key) {
+  id result = array[key];
+  return (result == [NSNull null]) ? nil : result;
+}
+
+
 @interface FLTTextureMessage ()
 + (FLTTextureMessage *)fromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
@@ -43,6 +53,10 @@ static NSDictionary *wrapResult(NSDictionary *result, FlutterError *error) {
 @end
 @interface FLTPositionMessage ()
 + (FLTPositionMessage *)fromMap:(NSDictionary *)dict;
+- (NSDictionary *)toMap;
+@end
+@interface FLTAbsolutePositionMessage ()
++ (FLTAbsolutePositionMessage *)fromMap:(NSDictionary *)dict;
 - (NSDictionary *)toMap;
 @end
 @interface FLTMixWithOthersMessage ()
@@ -85,6 +99,7 @@ static NSDictionary *wrapResult(NSDictionary *result, FlutterError *error) {
   if ((NSNull *)result.formatHint == [NSNull null]) {
     result.formatHint = nil;
   }
+  result.httpHeaders = GetNullableObject(dict, @"httpHeaders");
   return result;
 }
 - (NSDictionary *)toMap {
@@ -94,7 +109,7 @@ static NSDictionary *wrapResult(NSDictionary *result, FlutterError *error) {
                                    (self.packageName ? self.packageName : [NSNull null]),
                                    @"packageName",
                                    (self.formatHint ? self.formatHint : [NSNull null]),
-                                   @"formatHint", nil];
+                                   @"formatHint", (self.httpHeaders ? self.httpHeaders : [NSNull null]), @"httpHeaders", nil];
 }
 @end
 
@@ -176,6 +191,27 @@ static NSDictionary *wrapResult(NSDictionary *result, FlutterError *error) {
   return [NSDictionary
       dictionaryWithObjectsAndKeys:(self.textureId ? self.textureId : [NSNull null]), @"textureId",
                                    (self.position ? self.position : [NSNull null]), @"position",
+                                   nil];
+}
+@end
+
+@implementation FLTAbsolutePositionMessage
++ (FLTAbsolutePositionMessage *)fromMap:(NSDictionary *)dict {
+  FLTAbsolutePositionMessage *result = [[FLTAbsolutePositionMessage alloc] init];
+  result.textureId = dict[@"textureId"];
+  if ((NSNull *)result.textureId == [NSNull null]) {
+    result.textureId = nil;
+  }
+  result.absolutePosition = dict[@"absolutePosition"];
+  if ((NSNull *)result.absolutePosition == [NSNull null]) {
+    result.absolutePosition = nil;
+  }
+  return result;
+}
+- (NSDictionary *)toMap {
+  return [NSDictionary
+      dictionaryWithObjectsAndKeys:(self.textureId ? self.textureId : [NSNull null]), @"textureId",
+                                   (self.absolutePosition ? self.absolutePosition : [NSNull null]), @"absolutePosition",
                                    nil];
 }
 @end
@@ -310,6 +346,21 @@ void FLTVideoPlayerApiSetup(id<FlutterBinaryMessenger> binaryMessenger, id<FLTVi
         FlutterError *error;
         FLTTextureMessage *input = [FLTTextureMessage fromMap:message];
         FLTPositionMessage *output = [api position:input error:&error];
+        callback(wrapResult([output toMap], error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [FlutterBasicMessageChannel
+        messageChannelWithName:@"dev.flutter.pigeon.VideoPlayerApi.absolutePosition"
+               binaryMessenger:binaryMessenger];
+    if (api) {
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        FLTTextureMessage *input = [FLTTextureMessage fromMap:message];
+        FLTAbsolutePositionMessage *output = [api absolutePosition:input error:&error];
         callback(wrapResult([output toMap], error));
       }];
     } else {
