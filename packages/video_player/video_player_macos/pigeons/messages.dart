@@ -6,7 +6,7 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  dartTestOut: 'test/test_api.g.dart',
+  // dartTestOut: 'test/test_api.g.dart',
   objcHeaderOut: 'macos/Classes/messages.g.h',
   objcSourceOut: 'macos/Classes/messages.g.m',
   objcOptions: ObjcOptions(
@@ -43,6 +43,12 @@ class PositionMessage {
   int position;
 }
 
+class AbsolutePositionMessage {
+  AbsolutePositionMessage(this.textureId, this.position);
+  int textureId;
+  int position;
+}
+
 class CreateMessage {
   CreateMessage({required this.httpHeaders});
   String? asset;
@@ -75,6 +81,8 @@ abstract class VideoPlayerMacOsApi {
   void play(TextureMessage msg);
   @ObjCSelector('position:')
   PositionMessage position(TextureMessage msg);
+  @ObjCSelector('absolutePosition:')
+  AbsolutePositionMessage absolutePosition(TextureMessage msg);
   @async
   @ObjCSelector('seekTo:')
   void seekTo(PositionMessage msg);
