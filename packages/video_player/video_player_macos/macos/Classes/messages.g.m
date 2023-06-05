@@ -5,7 +5,7 @@
 // See also: https://pub.dev/packages/pigeon
 
 #import "messages.g.h"
-#import <Flutter/Flutter.h>
+#import <FlutterMacOS/FlutterMacOS.h>
 
 #if !__has_feature(objc_arc)
 #error File requires ARC to be enabled.
@@ -204,18 +204,18 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 
 @implementation FLTAbsolutePositionMessage
 + (instancetype)makeWithTextureId:(NSNumber *)textureId
-    position:(NSNumber *)position {
+    absolutePosition:(NSNumber *)absolutePosition {
   FLTAbsolutePositionMessage* pigeonResult = [[FLTAbsolutePositionMessage alloc] init];
   pigeonResult.textureId = textureId;
-  pigeonResult.position = position;
+  pigeonResult.absolutePosition = absolutePosition;
   return pigeonResult;
 }
 + (FLTAbsolutePositionMessage *)fromList:(NSArray *)list {
   FLTAbsolutePositionMessage *pigeonResult = [[FLTAbsolutePositionMessage alloc] init];
   pigeonResult.textureId = GetNullableObjectAtIndex(list, 0);
   NSAssert(pigeonResult.textureId != nil, @"");
-  pigeonResult.position = GetNullableObjectAtIndex(list, 1);
-  NSAssert(pigeonResult.position != nil, @"");
+  pigeonResult.absolutePosition = GetNullableObjectAtIndex(list, 1);
+  NSAssert(pigeonResult.absolutePosition != nil, @"");
   return pigeonResult;
 }
 + (nullable FLTAbsolutePositionMessage *)nullableFromList:(NSArray *)list {
@@ -224,7 +224,7 @@ static id GetNullableObjectAtIndex(NSArray *array, NSInteger key) {
 - (NSArray *)toList {
   return @[
     (self.textureId ?: [NSNull null]),
-    (self.position ?: [NSNull null]),
+    (self.absolutePosition ?: [NSNull null]),
   ];
 }
 @end

@@ -4,6 +4,10 @@
 
 import 'package:pigeon/pigeon.dart';
 
+/// FIXME: Must replace
+/// #import <Flutter/Flutter.h> to #import <FlutterMacOS/FlutterMacOS.h> in [messages.g.m] file
+/// after dart run pigeon
+
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   // dartTestOut: 'test/test_api.g.dart',
@@ -44,9 +48,9 @@ class PositionMessage {
 }
 
 class AbsolutePositionMessage {
-  AbsolutePositionMessage(this.textureId, this.position);
+  AbsolutePositionMessage(this.textureId, this.absolutePosition);
   int textureId;
-  int position;
+  int absolutePosition;
 }
 
 class CreateMessage {

@@ -139,17 +139,17 @@ class PositionMessage {
 class AbsolutePositionMessage {
   AbsolutePositionMessage({
     required this.textureId,
-    required this.position,
+    required this.absolutePosition,
   });
 
   int textureId;
 
-  int position;
+  int absolutePosition;
 
   Object encode() {
     return <Object?>[
       textureId,
-      position,
+      absolutePosition,
     ];
   }
 
@@ -157,7 +157,7 @@ class AbsolutePositionMessage {
     result as List<Object?>;
     return AbsolutePositionMessage(
       textureId: result[0]! as int,
-      position: result[1]! as int,
+      absolutePosition: result[1]! as int,
     );
   }
 }

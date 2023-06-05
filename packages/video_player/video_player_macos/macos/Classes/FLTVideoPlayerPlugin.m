@@ -181,7 +181,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     CVPixelBufferRef pixelBuffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
     if (pixelBuffer != NULL) {
       @synchronized (self) {
-        CVBufferRelease(_lastValidFrame);
+          if (_lastValidFrame != nil) {
+            CVBufferRelease(_lastValidFrame);
+          }
         _lastValidFrame = pixelBuffer;
       }
     }
@@ -589,7 +591,10 @@ static CVReturn OnDisplayLink(CVDisplayLinkRef CV_NONNULL displayLink,
 /// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel {
   _disposed = true;
-  CVBufferRelease(_lastValidFrame);
+  if (_lastValidFrame != nil) {
+    CVBufferRelease(_lastValidFrame);
+    _lastValidFrame = nil;
+  }
   [self stopDisplayLink];
   [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
   [[_player currentItem] removeObserver:self
@@ -712,8 +717,7 @@ static CVReturn OnDisplayLink(CVDisplayLinkRef CV_NONNULL displayLink,
 
 - (FLTAbsolutePositionMessage*)absolutePosition:(FLTTextureMessage*)input error:(FlutterError**)error {
   FLTVideoPlayer *player = _players[input.textureId];
-  FLTAbsolutePositionMessage* result = [[FLTAbsolutePositionMessage alloc] init];
-  result.absolutePosition = @([player absolutePosition]);
+  FLTAbsolutePositionMessage* result = [FLTAbsolutePositionMessage makeWithTextureId:input.textureId absolutePosition: @([player absolutePosition])];
   return result;
 }
 
